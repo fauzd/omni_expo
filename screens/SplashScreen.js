@@ -3,6 +3,8 @@ import { Animated, Text, View, StyleSheet } from 'react-native';
 import  { Svg, Path } from 'react-native-svg';
 import { Dimensions } from 'react-native';
 import logo from '../assets/images/logo.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -40,15 +42,26 @@ const SplashScreen = ({ navigation }) => {
         delay: 100,
         useNativeDriver: true,
       }),
-    ]).start(() => {
-      navigation.navigate('Chat');
+    ]).start(async () => {
+      try {
+        const onboardingCompleted = await AsyncStorage.getItem('onboardingCompleted');
+        if (onboardingCompleted) {
+          navigation.replace('Chat');
+        } else {
+          navigation.replace('Onboarding');
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+        navigation.replace('Onboarding');
+      }
     });
-
+  
     // Wait 2 seconds before showing the text
     setTimeout(() => {
       setShowText(true);
     }, 2000);
   }, []);
+  
 
   return (
     <View style={styles.container}>
