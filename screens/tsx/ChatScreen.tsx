@@ -1,0 +1,149 @@
+import React, { useState } from 'react';
+import { GiftedChat, Bubble, IMessage, BubbleProps  } from 'react-native-gifted-chat';
+import { ChatScreenNavigationProp } from '../../src/types'; // Импортируйте тип навигации
+import axios from 'axios';
+
+interface ChatScreenProps {
+  navigation: ChatScreenNavigationProp;
+}
+
+const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
+
+  const fetchGPTResponse = async (history: Array<{ role: string; content: string }>) => {
+    try {
+      const response = await axios.post(
+        'https://api.openai.com/v1/chat/completions', // замените "gpt-3.5-turbo" на желаемую модель
+        {
+          model: "gpt-3.5-turbo",
+          messages: history,
+          temperature: 0.7
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer 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`,
+          },
+        },
+      );
+
+      const gptResponse = response.data.choices[0].message.content.trim();
+      const tokens = response.data.usage;
+            
+      console.log('GPT response:', gptResponse);
+      
+      return { gptResponse, tokens };
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 429) {
+          const retryAfter = error.response.headers['retry-after'];
+          console.error(`Error 429: Rate limited. Retry after ${retryAfter} seconds.`);
+        } else {
+          console.error('Error fetching GPT response:', error.response.status, error.response.data);
+        }
+      } else {
+        console.error('Error fetching GPT response:', error);
+      }
+    }
+    
+    return null;
+  };
+
+  const [conversationHistory, setConversationHistory] = useState([]);
+
+  const handleSendMessage = async (message: IMessage) => {
+    setMessages((previousMessages) => [
+      ...previousMessages,
+      message,
+    ]);
+
+    // Добавьте новое сообщение пользователя в историю переписки
+    setConversationHistory((previousHistory) => [
+      ...previousHistory,
+      { role: 'user', content: message.text },
+    ]);
+
+    //const prompt = `${message.text}`;
+    const { gptResponse, tokens } = await fetchGPTResponse([...conversationHistory, { role: 'user', content: message.text }]);
+    // console.log('GPT response:', gptResponse)
+
+    const gptMessage: IMessage = {
+      _id: Math.random().toString(),
+      text: `${gptResponse}\n\nВсего токенов: ${tokens.total_tokens}, Запрос: ${tokens.prompt_tokens}, Ответ: ${tokens.completion_tokens}`,
+      createdAt: new Date(),
+      user: {
+        _id: 2,
+        name: 'ChatGPT',
+      },
+    };
+
+    setMessages((previousMessages) => [
+      ...previousMessages,
+      gptMessage,
+    ]);
+
+    // Добавьте новое сообщение ассистента в историю переписки
+    setConversationHistory((previousHistory) => [
+      ...previousHistory,
+      { role: 'assistant', content: gptResponse },
+    ]);
+    
+  };
+
+  
+
+  const renderBubble = (props: BubbleProps<IMessage>) => {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          left: {
+            backgroundColor: props.currentMessage.isAnswer ? '#FDF4E5' : '#FFFFFF', // Используем цвет для ответов, если это ответ
+          },
+          right: {
+            backgroundColor: '#FDF4E5', // Установите цвет пузырька для ваших сообщений
+          },
+        }}
+        textStyle={{
+          left: {
+            color: '#240E54', // Установите цвет текста для ответов
+          },
+          right: {
+            color: '#240E54', // Установите цвет текста для ваших сообщений
+          },
+        }}
+      />
+    );
+  };
+    
+    
+    
+  const [messages, setMessages] = useState([]);
+
+  function onSend(newMessages = []) {
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, newMessages),
+    );
+  }
+
+  return (
+    <GiftedChat
+      messages={messages}
+      onSend={(newMessages) => handleSendMessage(newMessages[0])}
+      user={{
+        _id: 1,
+      }}
+      renderBubble={renderBubble}
+      inverted={false} // Измените значение на false
+      listViewProps={{
+        contentContainerStyle: {
+          flexGrow: 1,
+          justifyContent: 'flex-end',
+          backgroundColor: '#CDE6EA',
+        },
+      }}
+    />
+  );
+  
+};
+
+export default ChatScreen;
