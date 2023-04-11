@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators, TransitionSpecs } from '@react-navigation/stack';
 import SplashScreen from './screens/SplashScreen';
 import ChatScreen from './screens/ChatScreen';
+import AuthScreen from './screens/AuthScreen';
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import OnboardingScreen from './screens/OnboardingScreen';

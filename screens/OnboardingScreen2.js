@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import  { Svg, Path, Rect } from 'react-native-svg'; 
+import commonStyles from './OnboardingStyles'
 
 const OnboardingScreen2 = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
+    <View style={commonStyles.container}>
+
+      <View style={commonStyles.imageContainer}>
         <Svg
           width="353"
           height="373"
@@ -15,120 +17,38 @@ const OnboardingScreen2 = ({ navigation }) => {
         <Rect width="436" height="373" rx="45" fill="#CDE6EA"/>
         </Svg>
       </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.title}>Общайся, изучай и вдохновляйся </Text>
-        <Text style={styles.subtitle}>Выбирай подходящую тему для разговора с ИИ-помощником</Text>
-        <Text style={styles.text}>
-          2/3
-        </Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.skipButton]}
-            onPress={() => navigation.navigate('Chat')}>
-            <Text style={[styles.buttonText, styles.skipButtonText]}>Пропустить</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, styles.nextButton]}
-            onPress={() => navigation.navigate('Onboarding3')}>
-            <Text style={[styles.buttonText, styles.nextButtonText]}>Далее</Text>
-          </TouchableOpacity>
+
+      <View style={commonStyles.textContainer}>
+        <View style={commonStyles.UpperTextContainer}>
+          <Text style={commonStyles.title}>Общайся, изучай и вдохновляйся</Text>
+          <Text style={commonStyles.subtitle}>Выбирай подходящую тему для разговора с ИИ-помощником</Text>
         </View>
+
+        <View style={commonStyles.LowerTextContainer}>
+          <Text style={commonStyles.text}>
+            2/3
+          </Text>
+        </View>
+      </View>   
+
+      <View style={commonStyles.buttonContainer}>
+        <TouchableOpacity
+          style={[commonStyles.button, commonStyles.skipButton]}
+          onPress={() => navigation.navigate('Chat')}>
+          <Text style={[commonStyles.buttonText, commonStyles.skipButtonText]}>Пропустить</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[commonStyles.button, commonStyles.nextButton]}
+          onPress={() => navigation.navigate('Onboarding3')}>
+          <Text style={[commonStyles.buttonText, commonStyles.nextButtonText]}>Дальше</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  imageContainer: {
-    flex: 1,
-    alignItems: 'flex-end',
-    paddingTop: 78,
-    paddingRight: 0,
-  },
-  textContainer: {
-    flex: 1,
-    width:'100%',
-    paddingHorizontal: 35,
-  },
-  title: {
-    fontFamily: 'Alice',
-    fontStyle: 'normal',
-    fontWeight: '400',
-    fontSize: 34,
-    lineHeight: 34,
-    textAlign: 'left',
-    letterSpacing: -0.408,
-    color: '#240E54',
-    marginTop: 22,
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontFamily: 'Alice',
-    fontStyle: 'normal',
-    fontWeight: '400',
-    fontSize: 20,
-    lineHeight: 29,
-    textAlign: 'left',
-    letterSpacing: -0.408,
-    color: '#240E54',
-    marginTop: 22,
-    marginBottom: 10,
-  },
-  text: {
-    fontFamily: 'Alice',
-    fontStyle: 'normal',
-    fontWeight: '400',
-    fontSize: 20,
-    lineHeight: 29,
-    textAlign: 'left',
-    letterSpacing: -0.408,
-    color: '#240E54',
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 35,
-    paddingVertical: 16,
-    marginBottom: 70,
-  },
-  button: {
-    width: 159,
-    height: 52,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#240E54',
-    borderRadius: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  buttonText: {
-    fontFamily: 'SF Pro text',
-    fontSize: 18,
-    fontStyle: 'normal',
-    fontWeight: '400',
-    fontSize: 18,
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  skipButton: {
-    backgroundColor: '#FFFFFF',
-  },
-  skipButtonText: {
-    color: '#240E54',
-  },
-  nextButton: {
-    backgroundColor: '#240E54',
-  },
-  nextButtonText: {
-    color: '#FFFFFF',
-  },
+  
   });
 
 export default OnboardingScreen2;
