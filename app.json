@@ -2,6 +2,7 @@
   "expo": {
     "name": "omni_expo",
     "slug": "omni_expo",
+    "scheme": "omni_expo_deep_linking_scheme",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

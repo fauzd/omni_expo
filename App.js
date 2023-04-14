@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Button, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators, TransitionSpecs } from '@react-navigation/stack';
 import SplashScreen from './screens/SplashScreen';
@@ -10,7 +9,7 @@ import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
 import OnboardingScreen from './screens/OnboardingScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import OnboardingStackNavigator from './screens/OnboardingStackNavigator'; // Не забудьте создать этот файл и импортировать его
+import OnboardingStackNavigator from './screens/OnboardingStackNavigator';
 
 
 const MainStack = createStackNavigator();
@@ -64,6 +63,11 @@ function MainStackNavigator() {
         component={OnboardingStackNavigator} options={{ headerShown: false }}
       />
       <MainStack.Screen
+        name="Auth"
+        component={AuthScreen}
+        options={{ headerShown: false }}
+      />
+      <MainStack.Screen
         name="Chat"
         component={ChatScreen}
         options={({ navigation }) => ({
@@ -84,14 +88,28 @@ export default function App() {
     Alice: require('./assets/fonts/Alice-Regular.ttf'),
   });
 
-  if (!fontsLoaded) {
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      try {
+        const onboardingValue = await AsyncStorage.getItem('onboardingCompleted');
+        setOnboardingCompleted(onboardingValue === 'true');
+      } catch (error) {
+        console.error('Error checking onboarding:', error);
+      }
+    };
+    checkOnboarding();
+  }, []);
+
+  if (!fontsLoaded || onboardingCompleted === null) {
     return <AppLoading />;
   }
 
   return (
     <View style={styles.container}>
       <NavigationContainer>
-        <MainStackNavigator />
+        {onboardingCompleted ? <MainStackNavigator /> : <OnboardingStackNavigator />}
       </NavigationContainer>
       <StatusBar style="auto" />
     </View>

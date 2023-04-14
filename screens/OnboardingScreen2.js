@@ -34,7 +34,7 @@ const OnboardingScreen2 = ({ navigation }) => {
       <View style={commonStyles.buttonContainer}>
         <TouchableOpacity
           style={[commonStyles.button, commonStyles.skipButton]}
-          onPress={() => navigation.navigate('Chat')}>
+          onPress={() => navigation.navigate('Auth')}>
           <Text style={[commonStyles.buttonText, commonStyles.skipButtonText]}>Пропустить</Text>
         </TouchableOpacity>
         <TouchableOpacity

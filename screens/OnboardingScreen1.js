@@ -5,6 +5,7 @@ import commonStyles from './OnboardingStyles'
 import { Dimensions } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
+console.log(`ширина текущего экрана: ${screenWidth}`)
 const originalWidth = 353;
 const originalHeight = 373;
 
@@ -43,7 +44,7 @@ const OnboardingScreen1 = ({ navigation }) => {
       <View style={commonStyles.buttonContainer}>
         <TouchableOpacity
           style={[commonStyles.button, commonStyles.skipButton]}
-          onPress={() => navigation.navigate('Chat')}>
+          onPress={() => navigation.navigate('Auth')}>
           <Text style={[commonStyles.buttonText, commonStyles.skipButtonText]}>Пропустить</Text>
         </TouchableOpacity>
         <TouchableOpacity

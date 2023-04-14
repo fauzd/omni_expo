@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { GiftedChat, Bubble, IMessage, BubbleProps  } from 'react-native-gifted-chat';
-import { ChatScreenNavigationProp } from '../../src/types'; // Импортируйте тип навигации
+import { ChatScreenNavigationProp, ChatScreenRouteProp } from '../src/types'; // Импортируйте тип навигации
 import axios from 'axios';
 
 interface ChatScreenProps {
   navigation: ChatScreenNavigationProp;
 }
 
-const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
+const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationProp; route: ChatScreenRouteProp }) => {
 
   const fetchGPTResponse = async (history: Array<{ role: string; content: string }>) => {
     try {
@@ -51,6 +51,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
   const [conversationHistory, setConversationHistory] = useState([]);
 
   const handleSendMessage = async (message: IMessage) => {
+
     setMessages((previousMessages) => [
       ...previousMessages,
       message,
@@ -72,7 +73,8 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
       createdAt: new Date(),
       user: {
         _id: 2,
-        name: 'ChatGPT',
+        name: 'OMNI',
+        //avatar: '../assets/images/logo w bgrnd.png',
       },
     };
 
@@ -97,7 +99,9 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
         {...props}
         wrapperStyle={{
           left: {
-            backgroundColor: props.currentMessage.isAnswer ? '#FDF4E5' : '#FFFFFF', // Используем цвет для ответов, если это ответ
+            backgroundColor: props.currentMessage.isAnswer
+              ? '#FDF4E5'
+              : '#FFFFFF', // Используем цвет для ответов, если это ответ
           },
           right: {
             backgroundColor: '#FDF4E5', // Установите цвет пузырька для ваших сообщений
@@ -114,26 +118,25 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
       />
     );
   };
-    
-    
-    
+
   const [messages, setMessages] = useState([]);
 
   function onSend(newMessages = []) {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages),
-    );
+    handleSendMessage(newMessages[0]);
   }
 
   return (
     <GiftedChat
       messages={messages}
-      onSend={(newMessages) => handleSendMessage(newMessages[0])}
+      onSend={(newMessages) => onSend(newMessages)}
       user={{
         _id: 1,
+        name: route.params?.user.name,
+        avatar: route.params?.user.picture, // Получите аватар из параметров маршрута
       }}
       renderBubble={renderBubble}
       inverted={false} // Измените значение на false
+      showUserAvatar={true}
       listViewProps={{
         contentContainerStyle: {
           flexGrow: 1,
@@ -143,7 +146,6 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ navigation }) => {
       }}
     />
   );
-  
 };
 
 export default ChatScreen;

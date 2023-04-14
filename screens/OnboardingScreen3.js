@@ -66,12 +66,12 @@ const OnboardingScreen3 = ({ navigation }) => {
       <View style={commonStyles.buttonContainer}>
         <TouchableOpacity
           style={[commonStyles.button, commonStyles.skipButton]}
-          onPress={() => navigation.navigate('Chat')}>
+          onPress={() => navigation.navigate('Auth')}>
           <Text style={[commonStyles.buttonText, commonStyles.skipButtonText]}>Пропустить</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[commonStyles.button, commonStyles.nextButton]}
-          onPress={() => navigation.navigate('Chat')}>
+          onPress={() => navigation.navigate('Auth')}>
           <Text style={[commonStyles.buttonText, commonStyles.nextButtonText]}>Начать</Text>
         </TouchableOpacity>
       </View>

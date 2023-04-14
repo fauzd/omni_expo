@@ -46,7 +46,7 @@ const SplashScreen = ({ navigation }) => {
       try {
         const onboardingCompleted = await AsyncStorage.getItem('onboardingCompleted');
         if (onboardingCompleted) {
-          navigation.replace('Chat');
+          navigation.replace('Auth');
         } else {
           navigation.replace('Onboarding');
         }
