@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Button,
   View,
   Text,
   TouchableOpacity,
@@ -9,17 +8,18 @@ import {
 import * as Google from 'expo-auth-session/providers/google';
 import jwt_decode from 'jwt-decode';
 import * as WebBrowser from 'expo-web-browser';
-import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 WebBrowser.maybeCompleteAuthSession();
 
-const AuthScreen = ({ navigation }) => {
+const AuthScreen = ({ navigation, route }) => {
+  
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId:
       '166635504701-rtj96vonuvc5oa2s3apdkq3m825gdgb7.apps.googleusercontent.com',
   });
 
-  const [user, setUser] = useState(null);
+const [user, setUser] = useState(null);
 
  const validateAndDecodeIdToken = async (idToken) => {
   try {
@@ -48,15 +48,43 @@ const AuthScreen = ({ navigation }) => {
       const { id_token } = response.params;
       console.log('Calling validateAndDecodeIdToken with ID token:', id_token);
 
-      validateAndDecodeIdToken(id_token).then((decodedToken) => {
-        console.log('validateAndDecodeIdToken result:', decodedToken);
+      validateAndDecodeIdToken(id_token).then(async (decodedToken) => {
         if (decodedToken) {
-          console.log('Navigating to ChatScreen with user:', decodedToken);
-          navigation.reset({ index: 0, routes: [{ name: 'Chat', params: { user: decodedToken } }] });
+          try {
+            await AsyncStorage.setItem('userToken', JSON.stringify(decodedToken));
+            navigation.navigate('Main', { user: decodedToken });
+          } catch (error) {
+            console.error('Error saving user data:', error);
+          }
         }
       });
     }
   }, [response, navigation]);
+
+  // useEffect(() => {
+  //   if (user) {
+  //     rootNavigation.navigate('Main');
+  //   }
+
+  //   const checkAuthState = async () => {
+  //     try {
+  //       const userData = await AsyncStorage.getItem('user');
+  //       const alreadyLaunched = await AsyncStorage.getItem('alreadyLaunched');
+  //       if (userData && alreadyLaunched) {
+  //         const user = JSON.parse(userData);
+  //         setUser(user);
+  //         //navigation.navigate('Chat', { user: user });
+  //         navigation.navigate('Main', { user: user });
+  //       } else if (alreadyLaunched) {
+  //         navigation.navigate('Auth');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error getting user data:', error);
+  //     }
+  //   };
+
+  //   checkAuthState();
+  // }, [user, rootNavigation]);
 
   return (
     <View style={styles.container}>

@@ -131,8 +131,8 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
       onSend={(newMessages) => onSend(newMessages)}
       user={{
         _id: 1,
-        name: route.params?.user.name,
-        avatar: route.params?.user.picture, // Получите аватар из параметров маршрута
+        name: route.params.user.name,
+        avatar: route.params.user.picture, // Получите аватар из параметров маршрута
       }}
       renderBubble={renderBubble}
       inverted={false} // Измените значение на false

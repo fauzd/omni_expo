@@ -1,8 +1,9 @@
 import React from 'react';
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import  { Svg, Path, Rect } from 'react-native-svg'; 
 import commonStyles from './OnboardingStyles'
 import { Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
 console.log(`ширина текущего экрана: ${screenWidth}`)
@@ -13,6 +14,12 @@ const scaleFactor = screenWidth / originalWidth;
 
 
 const OnboardingScreen1 = ({ navigation }) => {
+
+  const skipOnboarding = async () => {
+    await AsyncStorage.setItem('alreadyLaunched', 'true');
+    navigation.navigate('Auth');
+  };
+
   return (
     <View style={commonStyles.container}>
 
@@ -44,7 +51,7 @@ const OnboardingScreen1 = ({ navigation }) => {
       <View style={commonStyles.buttonContainer}>
         <TouchableOpacity
           style={[commonStyles.button, commonStyles.skipButton]}
-          onPress={() => navigation.navigate('Auth')}>
+          onPress={skipOnboarding}>
           <Text style={[commonStyles.buttonText, commonStyles.skipButtonText]}>Пропустить</Text>
         </TouchableOpacity>
         <TouchableOpacity

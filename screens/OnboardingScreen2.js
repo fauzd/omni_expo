@@ -2,8 +2,15 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import  { Svg, Path, Rect } from 'react-native-svg'; 
 import commonStyles from './OnboardingStyles'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OnboardingScreen2 = ({ navigation }) => {
+
+  const skipOnboarding = async () => {
+    await AsyncStorage.setItem('alreadyLaunched', 'true');
+    navigation.navigate('Auth');
+  };
+
   return (
     <View style={commonStyles.container}>
 
@@ -34,12 +41,12 @@ const OnboardingScreen2 = ({ navigation }) => {
       <View style={commonStyles.buttonContainer}>
         <TouchableOpacity
           style={[commonStyles.button, commonStyles.skipButton]}
-          onPress={() => navigation.navigate('Auth')}>
+          onPress={skipOnboarding}>
           <Text style={[commonStyles.buttonText, commonStyles.skipButtonText]}>Пропустить</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[commonStyles.button, commonStyles.nextButton]}
-          onPress={() => navigation.navigate('Onboarding3')}>
+          onPress={() => navigation.navigate('Onboarding2')}>
           <Text style={[commonStyles.buttonText, commonStyles.nextButtonText]}>Дальше</Text>
         </TouchableOpacity>
       </View>

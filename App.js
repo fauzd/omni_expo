@@ -10,6 +10,7 @@ import { useFonts } from 'expo-font';
 import OnboardingScreen from './screens/OnboardingScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OnboardingStackNavigator from './screens/OnboardingStackNavigator';
+import BottomTabNavigator from './screens/BottomTabNavigator';
 
 
 const MainStack = createStackNavigator();
@@ -65,6 +66,11 @@ function MainStackNavigator() {
       <MainStack.Screen
         name="Auth"
         component={AuthScreen}
+        options={{ headerShown: false }}
+      />
+      <MainStack.Screen
+        name="Main"
+        component={BottomTabNavigator}
         options={{ headerShown: false }}
       />
       <MainStack.Screen
