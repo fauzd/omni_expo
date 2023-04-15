@@ -72,6 +72,7 @@ function MainStackNavigator() {
         name="Main"
         component={BottomTabNavigator}
         options={{ headerShown: false }}
+        initialParams={{ user: null }}
       />
       <MainStack.Screen
         name="Chat"

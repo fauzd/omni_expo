@@ -52,7 +52,7 @@ const [user, setUser] = useState(null);
         if (decodedToken) {
           try {
             await AsyncStorage.setItem('userToken', JSON.stringify(decodedToken));
-            navigation.navigate('Main', { user: decodedToken });
+            navigation.navigate('Main', { screen: 'Home', params: { user: decodedToken } });
           } catch (error) {
             console.error('Error saving user data:', error);
           }

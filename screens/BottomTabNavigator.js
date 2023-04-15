@@ -8,7 +8,8 @@ import SettingsScreen from './SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
-const CustomTabBar = ({ state, descriptors, navigation }) => {
+const CustomTabBar = ({ state, descriptors, navigation, user }) => {
+  
   return (
     <View style={styles.footer}>
       {state.routes.map((route, index) => {
@@ -24,7 +25,11 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
+            if (route.name === 'Settings') {
+              navigation.navigate(route.name, { user });
+            } else {
+              navigation.navigate(route.name);
+            }
           }
         };
 
@@ -47,13 +52,18 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   );
 };
 
-const BottomTabNavigator = () => {
+const BottomTabNavigator = ({ route }) => {
+  const { user } = route.params;
+
+  console.log(`BottomTabNavigator says : ${user.picture}`)
+
   return (
-    <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
+    <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} user={user}/>}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
+          headerShown: false,
           tabBarIcon: 'home',
         }}
       />
@@ -61,6 +71,7 @@ const BottomTabNavigator = () => {
         name="Chats"
         component={ChatsScreen}
         options={{
+          headerShown: false,
           tabBarIcon: 'chatbubble-ellipses',
         }}
       />
@@ -68,8 +79,11 @@ const BottomTabNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{
+          headerShown: false,
           tabBarIcon: 'settings',
+          // user: user,
         }}
+        initialParams={{ user }}
       />
     </Tab.Navigator>
   );

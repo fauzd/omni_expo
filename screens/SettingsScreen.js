@@ -10,14 +10,21 @@ import {
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import CustomTabBar from './CustomTabBar';
 
-const SettingsScreen = ({ navigation }) => {
+const SettingsScreen = ({ navigation, route }) => {
+  const { user } = route.params;
+  console.log(`SettingsScreen says : ${user}`)
+
+  if (!user) {
+    return <Text>Loading...</Text>;
+  }
+  
   const settingsList = [
     { title: 'Учетная запись', iconName: 'account-circle' },
     { title: 'Чаты', iconName: 'forum' },
     { title: 'Внешний вид', iconName: 'palette' },
     { title: 'Уведомления', iconName: 'notifications' },
     { title: 'Конфиденциальность', iconName: 'privacy-tip' },
-    { title: 'Данные и хранилище', iconName: 'storage' },
+    // { title: 'Данные и хранилище', iconName: 'storage' },
     { title: 'Язык приложения', iconName: 'language' },
   ];
 
@@ -44,11 +51,11 @@ const SettingsScreen = ({ navigation }) => {
         {/* Профиль пользователя */}
         <View style={styles.profileContainer}>
           <Image
-            source={{ uri: 'https://example.com/profile.jpg' }}
-            style={styles.profileImage}
+            source={{ uri: user.picture }} 
+            style={styles.avatar}
           />
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Имя Фамилия</Text>
+            <Text style={styles.profileName}>{user.given_name} {user.family_name}</Text>
             <Text style={styles.profileEmail}>email@example.com</Text>
           </View>
         </View>
@@ -57,7 +64,7 @@ const SettingsScreen = ({ navigation }) => {
         {settingsList.map((item) => renderItem(item))}
 
         {/* Разделитель */}
-        <View style={styles.divider} />
+        {/* <View style={styles.divider} /> */}
 
         {/* Помощь и Пригласить друга */}
         <TouchableOpacity style={styles.listItem} onPress={() => {}}>
@@ -84,85 +91,87 @@ const SettingsScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-  flex: 1,
-  backgroundColor: '#FFFFFF',
+    flex: 1,
+    alignItems: 'stretch',
+    backgroundColor: '#FFFFFF',
   },
   header: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingHorizontal: 16,
-  paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   headerTitle: {
-  fontSize: 24,
-  fontWeight: 'bold',
-  marginLeft: 16,
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginLeft: 16,
   },
   profileContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingHorizontal: 16,
-  paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
   },
-  profileImage: {
-  width: 64,
-  height: 64,
-  borderRadius: 32,
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
   },
   profileInfo: {
-  marginLeft: 16,
+    marginLeft: 16,
   },
   profileName: {
-  fontSize: 18,
-  fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   profileEmail: {
-  fontSize: 14,
-  color: '#777',
+    fontSize: 14,
+    color: '#777',
   },
   listItem: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingHorizontal: 16,
-  paddingVertical: 12,
-  borderBottomWidth: 1,
-  borderColor: '#eee',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
   },
   listItemTitle: {
-  flex: 1,
-  fontSize: 16,
-  marginLeft: 16,
+    flex: 1,
+    fontSize: 16,
+    marginLeft: 16,
   },
   divider: {
-  height: 1,
-  backgroundColor: '#eee',
-  marginVertical: 12,
+    height: 1,
+    backgroundColor: '#eee',
+    marginVertical: 12,
   },
   logoContainer: {
-  alignItems: 'center',
-  paddingVertical: 16,
+    alignItems: 'center',
+    paddingVertical: 16,
   },
   logo: {
-  width: 100,
-  height: 100,
+    width: 100,
+    height: 100,
   },
   footer: {
-  flexDirection: 'row',
-  justifyContent: 'space-around',
-  alignItems: 'center',
-  borderTopWidth: 1,
-  borderColor: '#eee',
-  paddingVertical: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderColor: '#eee',
+    paddingVertical: 8,
   },
   footerButton: {
-  alignItems: 'center',
+    alignItems: 'center',
   },
   footerButtonActive: {
-  borderTopWidth: 2,
-  borderColor: 'black',
+    borderTopWidth: 2,
+    borderColor: 'black',
   },
   footerButtonText: {
-  fontSize: 12,
+    fontSize: 12,
   },
   });
   
