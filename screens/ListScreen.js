@@ -36,11 +36,10 @@ const ChatsScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Верхняя часть */}
       <View style={styles.header}>
         <Ionicons name="menu" size={32} color="black" />
         <Text style={styles.headerTitle}>Список чатов</Text>
-        <Ionicons name="search" size={32} color="black" />
+        <Ionicons name="search" size={32} color="white" />
       </View>
       
       {/* Поиск */}

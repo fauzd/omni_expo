@@ -12,6 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import OnboardingStackNavigator from './screens/OnboardingStackNavigator';
 import BottomTabNavigator from './screens/BottomTabNavigator';
 
+import UserContext from './src/UserContext';
+
 
 const MainStack = createStackNavigator();
 
@@ -91,6 +93,9 @@ function MainStackNavigator() {
 }
 
 export default function App() {
+
+  const [user, setUser] = useState(null);
+
   const [fontsLoaded] = useFonts({
     Alice: require('./assets/fonts/Alice-Regular.ttf'),
   });
@@ -114,12 +119,14 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      <NavigationContainer>
-        {onboardingCompleted ? <MainStackNavigator /> : <OnboardingStackNavigator />}
-      </NavigationContainer>
-      <StatusBar style="auto" />
-    </View>
+    <UserContext.Provider value={{ user, setUser }}>
+      <View style={styles.container}>
+        <NavigationContainer>
+          {onboardingCompleted ? <MainStackNavigator /> : <OnboardingStackNavigator />}
+        </NavigationContainer>
+        <StatusBar style="auto" />
+      </View>
+    </UserContext.Provider>
   );
 }
 

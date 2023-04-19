@@ -55,7 +55,7 @@ const CustomTabBar = ({ state, descriptors, navigation, user }) => {
 const BottomTabNavigator = ({ route }) => {
   const { user } = route.params;
 
-  console.log(`BottomTabNavigator says : ${user.picture}`)
+  // console.log(`BottomTabNavigator says : ${user.picture}`)
 
   return (
     <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} user={user}/>}>

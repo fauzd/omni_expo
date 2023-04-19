@@ -9,45 +9,45 @@ import * as Google from 'expo-auth-session/providers/google';
 import jwt_decode from 'jwt-decode';
 import * as WebBrowser from 'expo-web-browser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import UserContext from '../src/UserContext';
+import { useContext } from 'react';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const AuthScreen = ({ navigation, route }) => {
+
+  const { user, setUser } = useContext(UserContext);
   
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId:
       '166635504701-rtj96vonuvc5oa2s3apdkq3m825gdgb7.apps.googleusercontent.com',
   });
-
-const [user, setUser] = useState(null);
-
- const validateAndDecodeIdToken = async (idToken) => {
-  try {
-    console.log('Calling jwt_decode with ID token:', idToken);
-    const decodedToken = jwt_decode(idToken);
-    console.log('jwt_decode result:', decodedToken);
-
-    if (decodedToken) {
-      setUser(decodedToken);
-      console.log('User info:', decodedToken);
-      return decodedToken;
-    } else {
-      console.error('jwt_decode returned an undefined result');
+  
+  const validateAndDecodeIdToken = async (idToken) => {
+    try {
+      console.log('Calling jwt_decode with ID token:', idToken);
+      const decodedToken = jwt_decode(idToken);
+      console.log('jwt_decode result:', decodedToken);
+  
+      if (decodedToken) {
+        console.log('User info:', decodedToken);
+        return decodedToken;
+      } else {
+        console.error('jwt_decode returned an undefined result');
+        return null;
+      }
+    } catch (error) {
+      console.error('Invalid ID token:', error);
       return null;
     }
-  } catch (error) {
-    console.error('Invalid ID token:', error);
-    return null;
-  }
-};
-
+  };
+  
   React.useEffect(() => {
     if (response?.type === 'success') {
-
       console.log('Received successful Google response:', response);
       const { id_token } = response.params;
       console.log('Calling validateAndDecodeIdToken with ID token:', id_token);
-
+  
       validateAndDecodeIdToken(id_token).then(async (decodedToken) => {
         if (decodedToken) {
           try {
@@ -60,34 +60,11 @@ const [user, setUser] = useState(null);
       });
     }
   }, [response, navigation]);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     rootNavigation.navigate('Main');
-  //   }
-
-  //   const checkAuthState = async () => {
-  //     try {
-  //       const userData = await AsyncStorage.getItem('user');
-  //       const alreadyLaunched = await AsyncStorage.getItem('alreadyLaunched');
-  //       if (userData && alreadyLaunched) {
-  //         const user = JSON.parse(userData);
-  //         setUser(user);
-  //         //navigation.navigate('Chat', { user: user });
-  //         navigation.navigate('Main', { user: user });
-  //       } else if (alreadyLaunched) {
-  //         navigation.navigate('Auth');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error getting user data:', error);
-  //     }
-  //   };
-
-  //   checkAuthState();
-  // }, [user, rootNavigation]);
+  
 
   return (
-    <View style={styles.container}>
+    <UserContext.Provider value={user}>
+      <View style={styles.container}>
       <Text style={styles.title}>Log in to Omni</Text>
       <Text style={styles.subtitle}>Welcome back! Sign in using your social account or email to continue us</Text>
       <TouchableOpacity
@@ -115,6 +92,7 @@ const [user, setUser] = useState(null);
         <Text style={styles.buttonText}>Войти через Facebook</Text>
       </TouchableOpacity>
     </View>
+    </UserContext.Provider>
   );
 };
 

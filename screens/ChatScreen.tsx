@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from 'react-native';
 import { GiftedChat, Bubble, IMessage, BubbleProps  } from 'react-native-gifted-chat';
 import { ChatScreenNavigationProp, ChatScreenRouteProp } from '../src/types'; // Импортируйте тип навигации
 import axios from 'axios';
+import UserContext from '../src/UserContext';
 
 interface ChatScreenProps {
   navigation: ChatScreenNavigationProp;
 }
 
 const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationProp; route: ChatScreenRouteProp }) => {
+  const user = useContext(UserContext);
+  const { chatData: subPrompt } = route.params;
+  console.log(subPrompt)
 
   const fetchGPTResponse = async (history: Array<{ role: string; content: string }>) => {
     try {
@@ -48,48 +60,85 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
     return null;
   };
 
-  const [conversationHistory, setConversationHistory] = useState([]);
+  // Добавляем полученную от домашнего экрана подсказку в переписку первым сообщением, тем самым задавая контекст
+  const [conversationHistory, setConversationHistory] = useState([
+    { role: 'user', content: subPrompt },
+  ]);
+  
 
   const handleSendMessage = async (message: IMessage) => {
-
     setMessages((previousMessages) => [
       ...previousMessages,
       message,
     ]);
-
-    // Добавьте новое сообщение пользователя в историю переписки
-    setConversationHistory((previousHistory) => [
-      ...previousHistory,
-      { role: 'user', content: message.text },
-    ]);
-
-    //const prompt = `${message.text}`;
-    const { gptResponse, tokens } = await fetchGPTResponse([...conversationHistory, { role: 'user', content: message.text }]);
-    // console.log('GPT response:', gptResponse)
-
-    const gptMessage: IMessage = {
-      _id: Math.random().toString(),
-      text: `${gptResponse}\n\nВсего токенов: ${tokens.total_tokens}, Запрос: ${tokens.prompt_tokens}, Ответ: ${tokens.completion_tokens}`,
-      createdAt: new Date(),
-      user: {
-        _id: 2,
-        name: 'OMNI',
-        //avatar: '../assets/images/logo w bgrnd.png',
-      },
-    };
-
-    setMessages((previousMessages) => [
-      ...previousMessages,
-      gptMessage,
-    ]);
-
-    // Добавьте новое сообщение ассистента в историю переписки
-    setConversationHistory((previousHistory) => [
-      ...previousHistory,
-      { role: 'assistant', content: gptResponse },
-    ]);
-    
+  
+    // Если история переписки содержит только сообщение subPrompt, добавьте введенное сообщение и отправьте обе записи
+    if (conversationHistory.length === 1) {
+      setConversationHistory((previousHistory) => [
+        ...previousHistory,
+        { role: 'user', content: message.text },
+      ]);
+  
+      const { gptResponse, tokens } = await fetchGPTResponse([
+        ...conversationHistory,
+        { role: 'user', content: message.text },
+      ]);
+  
+      const gptMessage: IMessage = {
+        _id: Math.random().toString(),
+        text: `${gptResponse}\n\nВсего токенов: ${tokens.total_tokens}, Запрос: ${tokens.prompt_tokens}, Ответ: ${tokens.completion_tokens}`,
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: 'OMNI',
+          //avatar: '../assets/images/logo w bgrnd.png',
+        },
+      };
+  
+      setMessages((previousMessages) => [
+        ...previousMessages,
+        gptMessage,
+      ]);
+  
+      // Добавьте новое сообщение ассистента в историю переписки
+      setConversationHistory((previousHistory) => [
+        ...previousHistory,
+        { role: 'assistant', content: gptResponse },
+      ]);
+  
+    } else {
+      // Добавьте новое сообщение пользователя в историю переписки
+      setConversationHistory((previousHistory) => [
+        ...previousHistory,
+        { role: 'user', content: message.text },
+      ]);
+  
+      const { gptResponse, tokens } = await fetchGPTResponse([...conversationHistory, { role: 'user', content: message.text }]);
+  
+      const gptMessage: IMessage = {
+        _id: Math.random().toString(),
+        text: `${gptResponse}\n\nВсего токенов: ${tokens.total_tokens}, Запрос: ${tokens.prompt_tokens}, Ответ: ${tokens.completion_tokens}`,
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: 'OMNI',
+          //avatar: '../assets/images/logo w bgrnd.png',
+        },
+      };
+  
+      setMessages((previousMessages) => [
+        ...previousMessages,
+        gptMessage,
+      ]);
+  
+      // Добавьте новое сообщение ассистента в историю переписки
+      setConversationHistory((previousHistory) => [
+        ...previousHistory,
+        { role: 'assistant', content: gptResponse },
+      ]);
+    }
   };
+  
 
   
 
@@ -125,17 +174,25 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
     handleSendMessage(newMessages[0]);
   }
 
+  if (!user) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Загрузка...</Text>
+      </View>
+    );
+  }
+  
   return (
     <GiftedChat
       messages={messages}
       onSend={(newMessages) => onSend(newMessages)}
       user={{
         _id: 1,
-        name: route.params.user.name,
-        avatar: route.params.user.picture, // Получите аватар из параметров маршрута
+        name: user.name,
+        avatar: user.picture,
       }}
       renderBubble={renderBubble}
-      inverted={false} // Измените значение на false
+      inverted={false}
       showUserAvatar={true}
       listViewProps={{
         contentContainerStyle: {
@@ -146,6 +203,7 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
       }}
     />
   );
+  
 };
 
 export default ChatScreen;

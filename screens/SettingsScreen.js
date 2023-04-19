@@ -12,7 +12,7 @@ import CustomTabBar from './CustomTabBar';
 
 const SettingsScreen = ({ navigation, route }) => {
   const { user } = route.params;
-  console.log(`SettingsScreen says : ${user}`)
+  console.log(`SettingsScreen says : ${user.email}`)
 
   if (!user) {
     return <Text>Loading...</Text>;
@@ -40,9 +40,9 @@ const SettingsScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       {/* Верхняя часть */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Text style={styles.headerTitle}>Настройки</Text>
       </View>
 
@@ -56,7 +56,7 @@ const SettingsScreen = ({ navigation, route }) => {
           />
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>{user.given_name} {user.family_name}</Text>
-            <Text style={styles.profileEmail}>email@example.com</Text>
+            <Text style={styles.profileEmail}>{user.email}</Text>
           </View>
         </View>
 
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginLeft: 16,
+    //marginLeft: 16,
   },
   profileContainer: {
     flexDirection: 'row',
