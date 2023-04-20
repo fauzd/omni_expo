@@ -13,6 +13,7 @@ import OnboardingStackNavigator from './screens/OnboardingStackNavigator';
 import BottomTabNavigator from './screens/BottomTabNavigator';
 
 import UserContext from './src/UserContext';
+import { ChatProvider } from './src/ChatContext';
 
 
 const MainStack = createStackNavigator();
@@ -120,12 +121,18 @@ export default function App() {
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
-      <View style={styles.container}>
-        <NavigationContainer>
-          {onboardingCompleted ? <MainStackNavigator /> : <OnboardingStackNavigator />}
-        </NavigationContainer>
-        <StatusBar style="auto" />
-      </View>
+      <ChatProvider>
+        <View style={styles.container}>
+          <NavigationContainer>
+            {onboardingCompleted ? (
+              <MainStackNavigator />
+            ) : (
+              <OnboardingStackNavigator />
+            )}
+          </NavigationContainer>
+          <StatusBar style="auto" />
+        </View>
+      </ChatProvider>
     </UserContext.Provider>
   );
 }

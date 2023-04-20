@@ -7,10 +7,14 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import { GiftedChat, Bubble, IMessage, BubbleProps  } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, IMessage, BubbleProps, Message  } from 'react-native-gifted-chat';
 import { ChatScreenNavigationProp, ChatScreenRouteProp } from '../src/types'; // Импортируйте тип навигации
 import axios from 'axios';
-import UserContext from '../src/UserContext';
+
+import UserContext, { User } from '../src/UserContext';
+import { ChatContext } from '../src/ChatContext';
+import { Chat } from '../src/ChatContext';
+
 
 interface ChatScreenProps {
   navigation: ChatScreenNavigationProp;
@@ -18,6 +22,9 @@ interface ChatScreenProps {
 
 const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationProp; route: ChatScreenRouteProp }) => {
   const user = useContext(UserContext);
+  const { chats, setChats } = useContext(ChatContext);
+
+  
   const { chatData: subPrompt } = route.params;
   console.log(subPrompt)
 
@@ -65,8 +72,38 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
     { role: 'user', content: subPrompt },
   ]);
   
+  //Форматируем дату
+  const formatDate = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+  
+    return `${day}.${month}.${year}`;
+  };
+
+  //Создаем новый чат 
+  const createNewChat = (message: IMessage) => {
+    const date = new Date(message.createdAt);
+    const dateString = formatDate(date); // преобразуйте дату в строку здесь
+  
+    const newChat = {
+      id: Math.random().toString(),
+      title: message.text.slice(0, 20) + '...',
+      date: dateString,
+      messages: [message],
+    };
+  
+    return newChat;
+  };
+  
 
   const handleSendMessage = async (message: IMessage) => {
+
+    const chatIndex = chats.findIndex(
+      (chat) => chat.title === message.text.slice(0, 20) + '...'
+    );
+    
+
     setMessages((previousMessages) => [
       ...previousMessages,
       message,
@@ -99,6 +136,17 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
         ...previousMessages,
         gptMessage,
       ]);
+
+    // Если чат не существует, создайте новый чат
+    if (chatIndex === -1) {
+      const newChat = createNewChat(message);
+      setChats((previousChats) => [...previousChats, newChat]);
+    } else {
+      // Обновите текущий чат в chatList
+      const updatedChatList = [...chats];
+      updatedChatList[chatIndex].messages.push(message);
+      setChats(updatedChatList);
+    }
   
       // Добавьте новое сообщение ассистента в историю переписки
       setConversationHistory((previousHistory) => [
@@ -137,11 +185,10 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
         { role: 'assistant', content: gptResponse },
       ]);
     }
+
+
   };
-  
-
-  
-
+   
   const renderBubble = (props: BubbleProps<IMessage>) => {
     return (
       <Bubble
