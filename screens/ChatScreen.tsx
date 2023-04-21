@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext,useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
 import { GiftedChat, Bubble, IMessage, BubbleProps, Message  } from 'react-native-gifted-chat';
 import { ChatScreenNavigationProp, ChatScreenRouteProp } from '../src/types'; // Импортируйте тип навигации
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import UserContext, { User } from '../src/UserContext';
 import { ChatContext } from '../src/ChatContext';
@@ -72,6 +74,16 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
     { role: 'user', content: subPrompt },
   ]);
   
+  //Чаты и хранилище
+  const storeChats = async (chatsToStore: Chat[]) => {
+    try {
+      const jsonChats = JSON.stringify(chatsToStore);
+      await AsyncStorage.setItem('@chats', jsonChats);
+    } catch (error) {
+      console.error('Error saving chats:', error);
+    }
+  };
+  
   //Форматируем дату
   const formatDate = (date: Date) => {
     const day = String(date.getDate()).padStart(2, '0');
@@ -96,7 +108,6 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
     return newChat;
   };
   
-
   const handleSendMessage = async (message: IMessage) => {
 
     const chatIndex = chats.findIndex(
@@ -140,12 +151,15 @@ const ChatScreen = ({ navigation, route }: { navigation: ChatScreenNavigationPro
     // Если чат не существует, создайте новый чат
     if (chatIndex === -1) {
       const newChat = createNewChat(message);
-      setChats((previousChats) => [...previousChats, newChat]);
+      const updatedChats = [...chats, newChat];
+      setChats(updatedChats);
+      storeChats(updatedChats);
     } else {
       // Обновите текущий чат в chatList
       const updatedChatList = [...chats];
       updatedChatList[chatIndex].messages.push(message);
       setChats(updatedChatList);
+      storeChats(updatedChatList);
     }
   
       // Добавьте новое сообщение ассистента в историю переписки

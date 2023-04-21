@@ -1,6 +1,6 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IMessage } from 'react-native-gifted-chat';
-import UserContext, { User } from '../src/UserContext';
 
 export interface Chat {
   id: string;
@@ -8,7 +8,6 @@ export interface Chat {
   date: string;
   messages: IMessage[];
 }
-
 
 interface ChatContextType {
   chats: Chat[];
