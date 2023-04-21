@@ -7,6 +7,8 @@ import {
   TextInput,
   FlatList,
   Modal,
+  Dimensions,
+  
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import CustomTabBar from './CustomTabBar';
@@ -14,6 +16,12 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ChatContext } from '../src/ChatContext';
+
+import Constants from 'expo-constants';
+
+const statusBarHeight = Constants.statusBarHeight;
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const ChatsScreen = () => {
   
@@ -248,13 +256,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    height: 60,
+    height: screenHeight * 0.15 - statusBarHeight,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
     backgroundColor: 'white',
   },
   headerTitle: {
-    fontSize: 24,
+    fontFamily: "Alice",
+    fontSize: 34,
+    fontWeight: "400",
+    fontStyle: "normal",
+    lineHeight: 34,
+    letterSpacing: -0.40799999237060547,
+    textAlign: "center",
+    color: "#240E54"
   },
   searchContainer: {
     paddingHorizontal: 16,
